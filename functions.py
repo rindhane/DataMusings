@@ -81,7 +81,7 @@ def get_data():
         check=dt.split('.')[0]
         for table in tables:
             if check in table:
-                if not(type(df_dict.get(check,None))==None):
+                if not(type(df_dict.get(check,None))==type(None)):
                     df_dict[check]=pd.concat(df_dict[check],
                                                 get_dataFrame(table[2]),)
                 else:

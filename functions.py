@@ -74,16 +74,16 @@ def get_data():
     ]
     tables=get_tables(get_html(url),
                         types_req=types_req,
-                        date="Oct-01-2020",
-                        city="Amsterdam",)
+                        date="Nov-01-2020",
+                        city="Boston",)
     df_dict=dict()
     for dt in types_req:
         check=dt.split('.')[0]
         for table in tables:
             if check in table:
                 if not(type(df_dict.get(check,None))==type(None)):
-                    df_dict[check]=pd.concat(df_dict[check],
-                                                get_dataFrame(table[2]),)
+                    df_dict[check]=pd.concat([df_dict[check],
+                                                get_dataFrame(table[2])])
                 else:
                     df_dict[check]=get_dataFrame(table[2])
     return df_dict

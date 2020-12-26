@@ -7,6 +7,7 @@ import pandas as pd
 from io import BytesIO
 from gzip import GzipFile
 
+
 def get_html(url):
     '''function to obtain html as bs4 object'''
     req=requests.get(url)

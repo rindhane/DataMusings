@@ -14,12 +14,12 @@ def set_axes_details(axes,**inputs):
     axes.set_ylabel(y_label,fontsize=fontsize)
     axes.tick_params(axis="x", labelsize=labelsize ,color = color)
     axes.tick_params(axis='y', labelsize=labelsize, color= color)
-    axes.legend(prop={'size':inputs.get('legedsize',5)})
-    ax.set_title(inputs.get('title',None),fontsize= fontsize+20)
+    axes.legend(prop={'size':inputs.get('legendsize',5)})
+    axes.set_title(inputs.get('title',None),fontsize= fontsize+20)
     if inputs.get('grid', None):
-        ax.grid()
+        axes.grid()
 
-def plot_graph(X, label1,
+def plot_graph_archive(X, label1,
                A, label2,
             x_label=None,y_label=None,
             x_top_label=None,
@@ -73,5 +73,76 @@ def plot_distributions(series,
     set_axes_details(ax,**inputs)
     plot=getattr(ax,
                 inputs.get('kind','plot'),)
-    plot(series, bins=inputs.get('nbins',20))
+    plot(series, bins=inputs.get('nbins',20),
+            label=inputs.get('plot1',"plot1"))
     plt.show()
+
+def plot_inputs(inputs):
+    plot_inputs={
+        'hist': {
+            'nbins' : inputs.get('nbins',None),
+                }        
+    }
+    return plot_inputs.get(inputs.get('kind',None),{})
+
+def is_multiple_series(kind):
+    single=['hist']
+    double=['plot']
+    if kind in single:
+        return False
+    else :
+        return True
+
+def plot_graph(Xseries, Yseries=None,
+                        **inputs):
+    '''write utililty of graph'''
+    fig, ax = plt.subplots(**figure_details(
+        inputs.get('figWidth',10),inputs.get('figHeight',10)))
+    set_axes_details(ax,**inputs)
+    plot=getattr(ax,
+                inputs.get('kind','plot'),)
+    if is_multiple_series(input.get('kind','plot')):
+        plot(Xseries,Yseries,**plot_inputs(inputs),
+            label=inputs.get('legendlabel',"plot1"))
+    else:
+        plot(Xseries,**plot_inputs(inputs),
+            label=inputs.get('plot1',"plot1"))
+    if inputs.get('file_': None):
+        fig.savefig(inputs.get('file_'))
+    plt.show()
+
+def plot_graph_bar_line(series1,series2,
+                        **inputs):
+    '''Helper functio to plot the dual plot of barh & line'''
+    fig, ax = plt.subplots(**figure_details(
+        inputs.get('figWidth',10),inputs.get('figHeight',10)))
+    plt.style.use('dark_background')
+    ax2 = ax.twiny()
+    set_axes_details(ax,**inputs)
+    ax2.tick_params(axis='x',inputs.get('labelsize',5))
+    ax2.set_xlabel( x_top_label, inputs.get('fontsize',5))
+    ax2.legend(prop={'size':inputs.get('legendsize',5)})
+    plot=getattr(ax,
+                inputs.get('kind','plot'),)
+    plot2=getattr(ax2,
+                inputs.get('kind2'), 
+                getattr(ax2,'plot'))
+    plot(series1[0],series1[1],
+                label=inputs.get('legendlabel',"plot1"),
+                color=inputs.get('color',"tab:green"))
+    plot2(series2[1],series2[0],
+                label=inputs.get('legendlabel2',"plot2"),
+                color=inputs.get('color2',"tab:red"))
+    if file_:
+      fig.savefig(file_)
+    plt.show()
+    #ax2.set_xticklabels(get_conversion(ax.get_xticks()))
+    #ax2.set_xticks(ax.get_xticks())
+    #axes.Axes.set_xlim()
+    #configuring the y_axes properties
+    #axes.Axes.set_ylim()
+    #configure axes & figure properties
+    #ax.set(xlim=[-10000, 140000], xlabel=x_label, ylabel=y_label,title=title)
+    #plt.style.use('seaborn-pastel')
+    #saving the
+    

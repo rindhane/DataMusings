@@ -68,7 +68,7 @@ def plot_distributions(series,
                         **inputs):
     #setting upthe figures and axes
     fig, ax = plt.subplots(**figure_details(
-        inputs.get('figWidth',10),inputs.get('figHeight',10))
+        inputs.get('figWidth',10),inputs.get('figHeight',10)))
     ax.set_xlim([40,600])
     set_axes_details(ax,**inputs)
     plot=getattr(ax,

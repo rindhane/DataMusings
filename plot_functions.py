@@ -107,7 +107,7 @@ def plot_graph(Xseries, Yseries=None,
     else:
         plot(Xseries,**plot_inputs(inputs),
             label=inputs.get('plot1',"plot1"))
-    if inputs.get('file_': None):
+    if inputs.get('file_', None):
         fig.savefig(inputs.get('file_'))
     plt.show()
 
@@ -119,8 +119,8 @@ def plot_graph_bar_line(series1,series2,
     plt.style.use('dark_background')
     ax2 = ax.twiny()
     set_axes_details(ax,**inputs)
-    ax2.tick_params(axis='x',inputs.get('labelsize',5))
-    ax2.set_xlabel( x_top_label, inputs.get('fontsize',5))
+    ax2.tick_params(axis='x', labelsize=inputs.get('labelsize',5))
+    ax2.set_xlabel( inputs.get('x_label2',None), fontsize=inputs.get('fontsize',5))
     ax2.legend(prop={'size':inputs.get('legendsize',5)})
     plot=getattr(ax,
                 inputs.get('kind','plot'),)
@@ -133,8 +133,8 @@ def plot_graph_bar_line(series1,series2,
     plot2(series2[1],series2[0],
                 label=inputs.get('legendlabel2',"plot2"),
                 color=inputs.get('color2',"tab:red"))
-    if file_:
-      fig.savefig(file_)
+    if inputs.get('file_', None):
+        fig.savefig(inputs.get('file_'))
     plt.show()
     #ax2.set_xticklabels(get_conversion(ax.get_xticks()))
     #ax2.set_xticks(ax.get_xticks())

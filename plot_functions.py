@@ -25,7 +25,6 @@ def range_without_outliers(series):
     iqr=q3-q1
     return [q1,q3+2*iqr]
     
-
 def plot_inputs(inputs):
     plot_inputs={
         'hist': {
@@ -74,7 +73,7 @@ def plot_graph_bar_line(series1,series2,
     plot(series1[0],series1[1],
                 label=inputs.get('legendlabel',"plot1"),
                 color=inputs.get('color',"tab:green"))
-    plot2(series2[1],series2[0],
+    plot2(series2[0],series2[1],
                 label=inputs.get('legendlabel2',"plot2"),
                 color=inputs.get('color2',"tab:red"))
     set_axes_details(ax,**inputs)

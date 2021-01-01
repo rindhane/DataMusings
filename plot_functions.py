@@ -1,14 +1,16 @@
 import matplotlib.pyplot as plt
 
+plt.style.use('dark_background')
 def set_axes_details(axes,**inputs):
     x_label=inputs.get('x_label',None)
     y_label=inputs.get('y_label',None)
     color=inputs.get('color', 'tab:blue')
     fontsize=inputs.get('fontsize',5)
     labelsize=inputs.get('labelsize',5)
+    rotation=inputs.get('xlabelrotation',None)
     axes.set_xlabel(x_label,fontsize=fontsize)
     axes.set_ylabel(y_label,fontsize=fontsize)
-    axes.tick_params(axis="x", labelsize=labelsize ,color = color)
+    axes.tick_params(axis="x", labelsize=labelsize ,color = color, rotation=rotation)
     axes.tick_params(axis='y', labelsize=labelsize, color= color)
     axes.legend(prop={'size': inputs.get('legendsize',5)})
     axes.set_title(inputs.get('title',None),fontsize= fontsize+20)
@@ -19,12 +21,7 @@ def set_axes_details(axes,**inputs):
 def figure_details(width,height):
     return {'figsize': (width,height)}
 
-def range_without_outliers(series):
-    q1=series.quantile(.25)
-    q3=series.quantile(.75)
-    iqr=q3-q1
-    return [q1,q3+2*iqr]
-    
+   
 def plot_inputs(inputs):
     plot_inputs={
         'hist': {
@@ -59,12 +56,11 @@ def plot_graph(Xseries, Yseries=None,
     set_axes_details(ax,**inputs)
     plt.show()
 
-def plot_graph_bar_line(series1,series2,
+def plot_graph_doubleX(series1,series2,
                         **inputs):
     '''Helper functio to plot the dual plot of barh & line'''
     fig, ax = plt.subplots(**figure_details(
         inputs.get('figWidth',10),inputs.get('figHeight',10)))
-    plt.style.use('dark_background')
     ax2 = ax.twiny()
     plot=getattr(ax,
                 inputs.get('kind','plot'),)
@@ -77,10 +73,38 @@ def plot_graph_bar_line(series1,series2,
                 label=inputs.get('legendlabel2',"plot2"),
                 color=inputs.get('color2',"tab:red"))
     set_axes_details(ax,**inputs)
-    ax2.tick_params(axis='x', labelsize=inputs.get('labelsize',5))
+    ax2.tick_params(axis='x', 
+    labelsize=inputs.get('labelsize',5),
+    labelcolor=inputs.get('color2',"tab:red"))
     ax2.set_xlabel( inputs.get('x_label2',None), fontsize=inputs.get('fontsize',5))
     ax2.legend(loc=2,prop={'size':inputs.get('legendsize',5)})
     if inputs.get('file_', None):
         fig.savefig(inputs.get('file_'))
     plt.show()
     
+def plot_graph_doubleY(series1,series2,
+                        **inputs):
+    '''Helper functio to plot the dual plot of barh & line'''
+    fig, ax = plt.subplots(**figure_details(
+        inputs.get('figWidth',10),inputs.get('figHeight',10)))
+    ax2 = ax.twinx()
+    plot=getattr(ax,
+                inputs.get('kind','plot'),)
+    plot2=getattr(ax2,
+                inputs.get('kind2','plot'))
+    plot(series1[0],series1[1],
+                label=inputs.get('legendlabel',"plot1"),
+                color=inputs.get('color',"tab:green"))
+    plot2(series2[0],series2[1],
+                label=inputs.get('legendlabel2',"plot2"),
+                color=inputs.get('color2',"tab:red"))
+    set_axes_details(ax,**inputs)
+    ax2.tick_params(axis='y', 
+                    labelsize=inputs.get('labelsize',5),
+                    labelcolor=inputs.get('color2',"tab:red"))
+    ax2.set_ylabel( inputs.get('y_label2',None), fontsize=inputs.get('fontsize',5))
+    ax2.tick_params(axis='x',rotation=90)
+    ax2.legend(loc=0,prop={'size':inputs.get('legendsize',5)})
+    if inputs.get('file_', None):
+        fig.savefig(inputs.get('file_'))
+    plt.show()

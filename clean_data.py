@@ -29,11 +29,13 @@ def get_rates(item):
     elif pd.isna(item):
         return 0
 
-def categorical_values_rooms(item):
+def categorical_values_rooms(item,get_encoding=False):
   vals = {  'Shared room': 1,
    'Private room':2, 
    'Entire home/apt':3, 
    'Hotel room': 4 ,}
+  if get_encoding:
+    return vals
   return vals.get(item,0)
 
 def process_bath_text(item):
@@ -73,7 +75,7 @@ def get_json_list(item):
 def process(col,string_numeric,process_dict):
     if col.name in process_dict :
         tmp=process_dict[col.name]
-        return col.apply(tmp[0],**tmp[1] if tmp[1:] else {} )
+        return col.apply(tmp[0],**(tmp[1] if tmp[1:] else {}) )
     elif col.name in string_numeric:
         return col.apply(replace_strings)
     else:
@@ -98,7 +100,7 @@ def expand(cols,col_list,names_list):
 def estimate_annual_earning(df):
   return df[['price','minimum_nights','number_of_reviews_ltm']].product(axis=1)
 
-def clean_preprocess_data(df):
+def clean_preprocess_listings(df):
     '''function to clean and preprocess the input dataframe 
     and make it ready for further analysis'''
     listing_qualitative_factors=['name','description','neighborhood_overview','picture_url']
@@ -180,3 +182,13 @@ cols_discarded=['neighbourhood_group_cleansed', 'bathrooms','calendar_updated']+
         'calculated_host_listings_count_shared_rooms',]+\
 ['id','listing_url', 'scrape_id', 'last_scraped','calendar_last_scraped',
                       'first_review','last_review',]
+
+
+def clean_preprocess_reviews(df):
+  process_dict= {
+    'date':[pd.to_datetime,]
+  }
+  df=df.apply(process, **{'string_numeric' : [],
+                          'process_dict':process_dict})
+  df=df[df['date'] > pd.to_datetime('2020')]
+  return df

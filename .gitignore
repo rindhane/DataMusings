@@ -2,3 +2,7 @@
 #python runtime files
 __pycache__/
 .ipynb_checkpoints/
+
+
+#specific files
+results/archive/

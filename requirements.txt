@@ -3,3 +3,5 @@ numpy
 matplotlib
 requests
 bs4
+sklearn
+#tensorflow

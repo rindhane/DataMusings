@@ -3,7 +3,7 @@ import math
 from sklearn.model_selection import train_test_split
 from functions import self_setup_class
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import PolynomialFeatures, MinMaxScaler
+from sklearn.preprocessing import PolynomialFeatures, MinMaxScaler, StandardScaler
 from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import Ridge, Lasso, LinearRegression
 from sklearn.ensemble import AdaBoostRegressor
@@ -26,25 +26,27 @@ class ml_model_setup(self_setup_class):
         else:
             random_state=inputs.get('random_state',42)
         test_size=inputs.get('test_size',0.3)
-        self.train_test_index=dict()
-        (self.train_test_index['train'], 
-        self.train_test_index['test']) = train_test_split(
-                                        inputs.get('data').index,
+        (self.train_index, 
+        self.test_index) = train_test_split(
+                                        self.get_data().index,
                                         random_state=random_state,
                                         test_size=test_size)
-        return inputs.get('data').loc[self.train_test_index[inputs.get('kind')]]
+        return (self.train_index, self.test_index)
     def train(self,**kwargs):
-        tmp=self.get_train_test_split(data=self.get_data(),kind='train')
-        y=tmp[self.outcomes]
-        self.model.train(tmp[self.variables],tmp[self.outcomes],**kwargs)
-        self.evaluate(y_true=self.get_data().loc[self.train_test_index['test']][self.outcomes],
-                    y_pred=self.model.predict(
-                    self.get_data().loc[self.train_test_index['test']][self.variables]),)
+        train,test=self.get_train_test_split()
+        self.model.train(self.get_data()[self.variables].loc[train].values,
+                         self.get_data()[self.outcomes].loc[train].values.ravel(),
+                            **kwargs)
         self.save()
+        self.evaluate(train=train,test=test) 
     def save(self):
         self.predictor=self.model.save()
     def evaluate(self,**kwargs):
-        print('rms_error = ', math.sqrt(mean_squared_error(kwargs['y_true'],kwargs['y_pred'])))
+        scorer=kwargs.get('scorer', mean_squared_error)
+        y_true=self.get_data().loc[self.test_index][self.outcomes].values.ravel()
+        y_pred=self.predictor(
+                self.get_data().loc[self.test_index][self.variables].values)
+        print('test rms_error = ', math.sqrt(scorer(y_true,y_pred)))
         
 class setup(ml_model_setup) :
     def __init__(self,**kwargs):
@@ -72,13 +74,10 @@ class sklearn_model(self_setup_class):
 #need model saver to save serialized model
 
 pipe1 = Pipeline([
-    ('poly', PolynomialFeatures(degree=2)),
-    ('scaler', MinMaxScaler()),
-    ('regressor', Lasso(alpha=0.0001,
-                            tol=0.01,)),
+    ('poly', PolynomialFeatures(degree=3)),
+    ('scaler', StandardScaler()),
+    ('regressor', AdaBoostRegressor(n_estimators=600, 
+                                    loss='exponential')),
     ])
 regressor = sklearn_model(model=pipe1)
 model=ml_model_setup(data=None, model=regressor)
-
-
-

@@ -157,13 +157,32 @@ plot_graph(list(tmp.index.values),
 #results7: Finding top 3 impact creating explanatory variables
 from model_functions import model
 from functions import subtract_elem
-tmp=pd.get_dummies(data,columns=['neighbourhood_cleansed','bathrooms_type',
+import pandas as pd
+import numpy as np
+tmp=data.drop(columns=['annual_earnings'])
+tmp=pd.get_dummies(tmp,columns=['neighbourhood_cleansed','bathrooms_type',
                                 'room_type'],
                             prefix=['neighbourhoods','bathroom','room_type'],
                             prefix_sep='-')
-outcomes=['annual_earnings']
+outcomes=['number_of_reviews_ltm']
 variables=subtract_elem(tmp.columns,outcomes)
 model.set_inputs(data=tmp,
                 outcomes=outcomes,
                 variables=variables)
 model.train()
+ans=model.model.model.named_steps.regressor.feature_importances_
+order=ans.argsort()[::-1]
+power_array=model.model.model.named_steps.poly.powers_[order]
+print("The top 3 predicting variables are ")
+for i in range(0,3):
+    var = list(tmp[variables].columns[\
+    np.nonzero(power_array[i])])
+    powers=list(power_array[i][np.nonzero(power_array[i])])
+    stat=""
+    a=0
+    for p,n in zip(var,powers):
+        string= f"{p}{('^'+str(n)) if n > 1 else '' }"
+        stat=stat+('*' + string) if a > 0 else string
+        a=a+1
+    print(f"{i+1} : "+stat)
+

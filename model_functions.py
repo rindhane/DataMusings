@@ -7,6 +7,7 @@ from sklearn.preprocessing import PolynomialFeatures, MinMaxScaler, StandardScal
 from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import Ridge, Lasso, LinearRegression
 from sklearn.ensemble import AdaBoostRegressor
+from sklearn.svm import SVR
 def pass_self(self):
     return self
 
@@ -73,11 +74,10 @@ class sklearn_model(self_setup_class):
 #method to save gridsearchcv params and build model
 #need model saver to save serialized model
 
-pipe1 = Pipeline([
-    ('poly', PolynomialFeatures(degree=3)),
+pipe = Pipeline([
+    #('poly', PolynomialFeatures(degree=2)),
     ('scaler', StandardScaler()),
-    ('regressor', AdaBoostRegressor(n_estimators=600, 
-                                    loss='exponential')),
+    ('regressor', SVR(kernel='linear',C=100, epsilon=0.001, cache_size=1000, tol=1e-4)),
     ])
-regressor = sklearn_model(model=pipe1)
+regressor = sklearn_model(model=pipe)
 model=ml_model_setup(data=None, model=regressor)

@@ -41,3 +41,13 @@ def subtract_elem(x,y):
         else:
             pass
     return z
+
+def plot_scaler_abs(array):
+    min=array.min()
+    max=array.max()
+    return (array-min)*(1/(max-min))
+
+def plot_scaler(array):
+    t=abs(array).sum()
+    f=array/t
+    return array/t*1/f.sum()

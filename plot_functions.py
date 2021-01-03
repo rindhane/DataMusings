@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 plt.style.use('dark_background')
 def set_axes_details(axes,**inputs):
@@ -51,10 +52,12 @@ def plot_graph(Xseries, Yseries=None,
     else:
         plot(Xseries,**plot_inputs(inputs),
             label=inputs.get('legendlabel',"plot1"))
+    set_axes_details(ax,**inputs)
     if inputs.get('file_', None):
         fig.savefig(inputs.get('file_'))
-    set_axes_details(ax,**inputs)
-    plt.show()
+    if inputs.get('show',False):
+        plt.show()
+    return fig
 
 def plot_graph_doubleX(series1,series2,
                         **inputs):
@@ -80,7 +83,10 @@ def plot_graph_doubleX(series1,series2,
     ax2.legend(loc=2,prop={'size':inputs.get('legendsize',5)})
     if inputs.get('file_', None):
         fig.savefig(inputs.get('file_'))
-    plt.show()
+    if inputs.get('show',False):
+        plt.show()
+    return fig
+
     
 def plot_graph_doubleY(series1,series2,
                         **inputs):
@@ -107,4 +113,26 @@ def plot_graph_doubleY(series1,series2,
     ax2.legend(loc=0,prop={'size':inputs.get('legendsize',5)})
     if inputs.get('file_', None):
         fig.savefig(inputs.get('file_'))
-    plt.show()
+    if inputs.get('show',False):
+        plt.show()
+    return fig
+
+from functions import plot_scaler_abs
+def plot_coeff(df,**inputs):
+    scaler=plot_scaler_abs
+    df=df.apply(lambda x : scaler(x) if x.name in inputs.get('scale') else x )
+    plot=sns.catplot(x=inputs.get('x'), y=inputs.get('y'), 
+                    kind= 'bar', data=df, orient='h')
+    if inputs.get('file_', None):
+        plot.fig.savefig(inputs.get('file_'))
+    if inputs.get('show',False):
+        plt.show()
+    return plot
+
+def plot_variable_corelation(df, **inputs):
+    plot=sns.heatmap(df.corr())
+    if inputs.get('file_', None):
+        plot.get_figure().savefig(inputs.get('file_'))
+    if inputs.get('show',False):
+        plt.show()
+    return plot

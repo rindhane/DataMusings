@@ -125,6 +125,13 @@ for col in cols:
     plot_graph(list(map(lambda x : labels[col][x],p.index.values)),
                     p.values.flatten(),**inputs)
 
+#quick peak in correlation among other variables
+inputs={
+    'file_' : 'results/heatmap.jpg'
+}
+from plot_functions import plot_variable_corelation
+plot_variable_corelation(data.corr(),**inputs)
+
 #results6 : seasonality check
 import pandas as pd
 from clean_data import clean_preprocess_reviews
@@ -158,7 +165,7 @@ plot_graph(list(tmp.index.values),
 from model_functions import model
 from functions import subtract_elem
 import pandas as pd
-import numpy as np
+from plot_functions import plot_coeff
 tmp=data.drop(columns=['annual_earnings'])
 tmp=pd.get_dummies(tmp,columns=['neighbourhood_cleansed','bathrooms_type',
                                 'room_type'],
@@ -170,19 +177,19 @@ model.set_inputs(data=tmp,
                 outcomes=outcomes,
                 variables=variables)
 model.train()
-ans=model.model.model.named_steps.regressor.feature_importances_
+#model trained & plotting results
+ans=model.model.model.named_steps.regressor.coef_
+ans=ans.ravel()
 order=ans.argsort()[::-1]
-power_array=model.model.model.named_steps.poly.powers_[order]
-print("The top 3 predicting variables are ")
-for i in range(0,3):
-    var = list(tmp[variables].columns[\
-    np.nonzero(power_array[i])])
-    powers=list(power_array[i][np.nonzero(power_array[i])])
-    stat=""
-    a=0
-    for p,n in zip(var,powers):
-        string= f"{p}{('^'+str(n)) if n > 1 else '' }"
-        stat=stat+('*' + string) if a > 0 else string
-        a=a+1
-    print(f"{i+1} : "+stat)
-
+tmp=pd.concat([pd.Series(tmp.columns[order]),
+                pd.Series(ans[order])], 
+                axis=1,).\
+                    rename(columns={0:'features',1:'visit_influencer'})
+inputs={
+    'file_':'results/top3.jpg',
+    'show': False,
+   'x':'visit_influencer',  
+   'y':'features',
+    'scale' : ['visit_influencer']
+}
+plot_coeff(tmp,**inputs)

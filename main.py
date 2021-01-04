@@ -4,6 +4,7 @@
 #downloading data into memory
 from datetime import datetime
 from downloader import get_data
+city = "Boston"
 df_dict=get_data(city="Boston", 
                 latest_by=datetime.today().strftime("%d-%B-%Y"))
 listings=df_dict['listings']
@@ -15,24 +16,67 @@ from clean_data import clean_preprocess_listings
 data=clean_preprocess_listings(listings)
 #plotting the results from the exploratory analysis
 
-#results1 : Broad understanding of earning & avg.price
-
-#results 2/ plot1:  various listings
+#results1/plot1 : Broad understanding of earning & avg.price
 from plot_functions import plot_graph
 from functions import range_without_outliers
 inputs= {
+    'title':f'Annual earning across Airbnb listing in {city} ',
+    'kind' : 'hist',
+    'bins' : 600,
+    'x_label' : f'Earning by a single listing',
+    'y_label': "No. of Listing", 
+    'labelsize': 20,
+    'fontsize' : 30,
+    'xlim':range_without_outliers(data['annual_earnings'][data['annual_earnings']!=0]),
+    'legendlabel':'Earning ',
+    'legendsize':20,
+    'file_': 'results/average_earning.jpg',
+}
+
+plot_graph(data['annual_earnings'][data['annual_earnings']!=0].values, **inputs)
+print(f"The average price/night for a visitor in {city} based on\
+available listings is ",data['price'].mean()," in US-Dollars")
+
+#results 1/ plot2:  various listings
+from plot_functions import plot_graph
+from functions import range_without_outliers
+inputs= {
+    'title': f'Price/Night offering across Listings in {city}',
     'kind' : 'hist',
     'bins' : 200,
-    'x_label' : 'Listings Prices in Boston',
+    'x_label' : f"Listings's Price/Night ",
     'y_label': "No. of Listings", 
     'labelsize': 20,
     'fontsize' : 30,
     'xlim':range_without_outliers(data['price']),
-    'legendlabel':'price vs demand',
+    'legendlabel':'price/night',
+    'legendsize':20,
+    'file_': 'results/price_options.jpg'
+}
+plot_graph(data['price'].values, **inputs)
+#results 2/ plot1:  Most opted price by visitors to the city.
+def price_demand(df):
+  ans=list()
+  tmp=data[['price','number_of_reviews_ltm']].apply(
+      lambda col: [col['price']]*int(col['number_of_reviews_ltm']),axis=1 )
+  for i in tmp:
+    ans.extend(i)
+  return pd.Series(ans)
+inputs= {
+    'title': f'Price/Night opted by tourists to {city}',
+    'kind' : 'hist',
+    'bins' : 50,
+    'x_label' : f"Listings's Price/Night ",
+    'y_label': "No. of Visits", 
+    'labelsize': 20,
+    'fontsize' : 30,
+    'xlim':[0,range_without_outliers(price_demand(data))[1]],
+    'legendlabel':'Visits',
     'legendsize':20,
     'file_': 'results/price_demand.jpg'
 }
-plot_graph(data['price'].values, **inputs)
+plot_graph(price_demand(data).values, **inputs)
+print('Price with highest demand =','$'+str(int(price_demand(data).mean())))
 
 #results3 : Variation of avg.price & annual_earning across areas
 from plot_functions import plot_graph_doubleX

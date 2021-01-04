@@ -12,13 +12,6 @@ def reverse_dict(dict_):
 def category_from_encoding(item, inverted_dict):
     return inverted_dict.get(item,np.nan) # see if np.nan can be replaced with something else
 
-def price_demand(df):
-  ans=list()
-  tmp=data[['price','number_of_reviews_ltm']].apply(
-      lambda col: [col['price']]*int(col['number_of_reviews_ltm']),axis=1 )
-  for i in tmp:
-    ans.extend(i)
-  return pd.Series(ans)
 
 def range_without_outliers(series):
     q1=series.quantile(.25)

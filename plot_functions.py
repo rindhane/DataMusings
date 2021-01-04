@@ -121,8 +121,10 @@ from functions import plot_scaler_abs
 def plot_coeff(df,**inputs):
     scaler=plot_scaler_abs
     df=df.apply(lambda x : scaler(x) if x.name in inputs.get('scale') else x )
+    height=inputs.get('height',2*2.54)
     plot=sns.catplot(x=inputs.get('x'), y=inputs.get('y'), 
-                    kind= 'bar', data=df, orient='h')
+                    kind= 'bar', data=df, 
+                    orient='h', height=height)
     if inputs.get('file_', None):
         plot.fig.savefig(inputs.get('file_'))
     if inputs.get('show',False):
@@ -130,7 +132,9 @@ def plot_coeff(df,**inputs):
     return plot
 
 def plot_variable_corelation(df, **inputs):
-    plot=sns.heatmap(df.corr())
+    fig, ax = plt.subplots(**figure_details(
+        inputs.get('figWidth',10),inputs.get('figHeight',10)))
+    plot=sns.heatmap(df.corr(),ax=ax)
     if inputs.get('file_', None):
         plot.get_figure().savefig(inputs.get('file_'))
     if inputs.get('show',False):

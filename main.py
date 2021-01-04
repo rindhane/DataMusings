@@ -2,8 +2,10 @@
 '''main file to execute the project'''
 
 #downloading data into memory
+from datetime import datetime
 from downloader import get_data
-df_dict=get_data()
+df_dict=get_data(city="Boston", 
+                latest_by=datetime.today().strftime("%d-%B-%Y"))
 listings=df_dict['listings']
 calendar=df_dict['calendar']
 reviews=df_dict['reviews']
@@ -190,6 +192,7 @@ inputs={
     'show': False,
    'x':'visit_influencer',  
    'y':'features',
-    'scale' : ['visit_influencer']
+    'scale' : ['visit_influencer'],
+    'height':5*2.54,
 }
 plot_coeff(tmp,**inputs)

@@ -77,7 +77,10 @@ class sklearn_model(self_setup_class):
 pipe = Pipeline([
     #('poly', PolynomialFeatures(degree=2)),
     ('scaler', StandardScaler()),
-    ('regressor', SVR(kernel='linear',C=100, epsilon=0.001, cache_size=1000, tol=1e-4)),
+    ('regressor', SVR(kernel='linear',
+                    C=100, epsilon=0.001, 
+                    cache_size=1000, 
+                    tol=1e-4)),
     ])
 regressor = sklearn_model(model=pipe)
 model=ml_model_setup(data=None, model=regressor)

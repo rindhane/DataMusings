@@ -10,6 +10,7 @@ def replace_nothing (item):
   return item
 
 def replace_na(item):
+  '''helper function to remove nan values'''
   if pd.isna(item):
     return 0
   else : 

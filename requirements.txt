@@ -5,5 +5,3 @@ requests
 bs4
 sklearn
 #tensorflow
-
-https://rindhane.github.io/entries/Entry1.html

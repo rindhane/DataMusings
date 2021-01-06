@@ -257,4 +257,4 @@ inputs={
 print("plotting the results from the trained model ")
 plot_coeff(tmp,**inputs)
 print('Complete program has been successfull executed')
-print(f"All the plot results have been created in the path {results_path}")
+print(f"All the plot results have been created in the path:'{results_path}'")

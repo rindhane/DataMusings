@@ -4,8 +4,8 @@
 
 ### Table of Contents
 1. [Getting Started](#gettingStarted)
-    A. [Prerequisities](#Prerequisites)
-    B. [Quick Start Guide](#quickguide)
+    * [Prerequisities](#Prerequisites)
+    * [Quick Start Guide](#quickguide)
 2. [Project Motivation](#motivation)
 3. [Results](#results)
 4. [File Descriptions](#files)
@@ -18,8 +18,10 @@ These instructions will get you a copy of the project up and running on your loc
 #### Prerequisites
 
 Following softwares are required to be installed in order to build and run this application/files: 
-1. `Python 3` : Follow the guidelines from this [link](https://realpython.com/installing-python/) to install python).
+1. `Python 3` : Follow the guidelines from this [link](https://realpython.com/installing-python/) to install python.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Optional : Install virtual environment for clean setup. Use the [link](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) for installation guidelines.
+
 2. `Git` : Follow this [guidelines](https://docs.gitlab.com/ee/gitlab-basics/start-using-git.html) to install & get started with git command line.
 
 
@@ -97,7 +99,7 @@ Project [Root Folder]/
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/rindhane/DataMusings/blob/main/LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/rindhane/DataMusings/blob/master/LICENSE.md) file for details
 
 ### Credits : 
 * **Murray Cox** -[Reach out](http://insideairbnb.com/about.html)

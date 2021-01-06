@@ -8,10 +8,14 @@ from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import Ridge, Lasso, LinearRegression
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.svm import SVR
+
 def pass_self(self):
     return self
 
+
 class ml_model_setup(self_setup_class):
+    '''Helper class to co-ordinate the data details with ML models 
+        during training & evaluation'''
     def __init__(self,data,**kwargs):
         super().__init__(data=data,**kwargs)
         if not('preprocessor' in kwargs):
@@ -50,6 +54,7 @@ class ml_model_setup(self_setup_class):
         print('test rms_error = ', math.sqrt(scorer(y_true,y_pred)))
         
 class setup(ml_model_setup) :
+    '''Helper class to create setup from existing model'''
     def __init__(self,**kwargs):
         if 'data' in kwargs:
             super().__init__(**kwargs)
@@ -60,6 +65,8 @@ class setup(ml_model_setup) :
         return cls(**instance.__dict__)
 
 class sklearn_model(self_setup_class):
+    '''Helper class to dovetail the model from sklearn with
+        the  ml_model_setup class'''
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.model_setup(**kwargs)
@@ -69,11 +76,13 @@ class sklearn_model(self_setup_class):
     def save(self, **inputs):
         return self.predict
 
+#developer comments kindly ignore
 #need model comparator & comparison plotter
 #need model tuner based on gridsearchCV
 #method to save gridsearchcv params and build model
 #need model saver to save serialized model
 
+#model configuration based on model tuning from gridsearchCV 
 pipe = Pipeline([
     #('poly', PolynomialFeatures(degree=2)),
     ('scaler', StandardScaler()),
@@ -82,5 +91,7 @@ pipe = Pipeline([
                     cache_size=1000, 
                     tol=1e-4)),
     ])
+
+#creating model instance to be consumed by the main.py file
 regressor = sklearn_model(model=pipe)
 model=ml_model_setup(data=None, model=regressor)

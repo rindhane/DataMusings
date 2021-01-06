@@ -67,6 +67,9 @@ types_req = [
     ]
 def get_data(city="Boston", types_req=types_req, 
                 latest_by=datetime.today().strftime("%d-%B-%Y")):
+    '''function helps to download data for a particular city and 
+    returns a dictionary of dataframes  '''
+    
     url='http://insideairbnb.com/get-the-data.html'
     tables=get_tables(get_html(url),
                         types_req=types_req,

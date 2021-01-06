@@ -24,12 +24,14 @@ def replace_strings(item):
     return item
 
 def get_rates(item):
-    if type(item)==str:
-        return float(item.replace('%',''))/100
-    elif pd.isna(item):
-        return 0
+  '''strings to float data type'''
+  if type(item)==str:
+      return float(item.replace('%',''))/100
+  elif pd.isna(item):
+      return 0
 
 def categorical_values_rooms(item,get_encoding=False):
+  '''function to encode the room_type into numeric categories'''
   vals = {  'Shared room': 1,
    'Private room':2, 
    'Entire home/apt':3, 
@@ -39,6 +41,7 @@ def categorical_values_rooms(item,get_encoding=False):
   return vals.get(item,0)
 
 def process_bath_text(item):
+  '''function to encode the bath column into numeric categories'''
   ans=list()
   if pd.isna(item):
     ans.append(0)
@@ -56,34 +59,39 @@ def process_bath_text(item):
     return ans
 
 def get_price(item):
-    return float(item.replace('$','').replace(',',''))
+  '''string to float data type'''
+  return float(item.replace('$','').replace(',',''))
 
 def ordinal_categories(item,cat_dict):
-    if item in cat_dict:
-        return cat_dict[item]
-    elif pd.isna(item):
-        return 0
-    else :
-        return item
+  '''helper function to convert cateogrial columns into 
+  numeric categories based on the encoding in cat_dict  '''
+  if item in cat_dict:
+      return cat_dict[item]
+  elif pd.isna(item):
+      return 0
+  else :
+      return item
 
 def get_json_list(item):
-    if pd.isna(item):
-        return 0
-    else :
-        return len(json.loads(item.replace('\'','\"')))
+  '''to convert string characters list to python list'''
+  if pd.isna(item):
+      return 0
+  else :
+      return len(json.loads(item.replace('\'','\"')))
 
 def process(col,string_numeric,process_dict):
-    if col.name in process_dict :
-        tmp=process_dict[col.name]
-        return col.apply(tmp[0],**(tmp[1] if tmp[1:] else {}) )
-    elif col.name in string_numeric:
-        return col.apply(replace_strings)
-    else:
-        return col.apply(replace_na)
+  '''following function applies encoding rule to each of the respective column'''
+  if col.name in process_dict :
+      tmp=process_dict[col.name]
+      return col.apply(tmp[0],**(tmp[1] if tmp[1:] else {}) )
+  elif col.name in string_numeric:
+      return col.apply(replace_strings)
+  else:
+      return col.apply(replace_na)
 
 def combine(df,col_list, names):
-    #combine multiple columns  values into one column 
-    #and returns the resultant dataframe 
+    '''combine multiple columns  values into one column 
+    and returns the resultant dataframe''' 
     for idx,cols in enumerate(col_list):
         tmp=pd.DataFrame(df[cols].apply(sum,axis=1),columns=names[idx])
         df=df.drop(columns=cols)
@@ -91,6 +99,8 @@ def combine(df,col_list, names):
     return df
 
 def expand(cols,col_list,names_list):
+  '''expand value in single columns  values into new columns 
+    and returns the resultant dataframe'''
   for idx,col in enumerate(col_list):
     tmp=pd.Series(cols[col],index=names_list[idx])  
     cols=cols.drop(labels=[col])
@@ -98,10 +108,11 @@ def expand(cols,col_list,names_list):
     return cols
 
 def estimate_annual_earning(df):
+  '''Helper function to genrate new column for annual earnings'''
   return df[['price','minimum_nights','number_of_reviews_ltm']].product(axis=1)
 
 def clean_preprocess_listings(df):
-    '''function to clean and preprocess the input dataframe 
+    '''function to clean and preprocess the listings dataframe 
     and make it ready for further analysis'''
     listing_qualitative_factors=['name','description','neighborhood_overview','picture_url']
     listing_characterisitics=['neighbourhood_cleansed','room_type',
@@ -165,7 +176,7 @@ def clean_preprocess_listings(df):
     return df    
 
 
-
+'''keeping track of discarded columns'''
 cols_discarded=['neighbourhood_group_cleansed', 'bathrooms','calendar_updated']+\
 ['reviews_per_month','latitude','longitude']+\
 ['neighbourhood','property_type']+\
@@ -185,6 +196,7 @@ cols_discarded=['neighbourhood_group_cleansed', 'bathrooms','calendar_updated']+
 
 
 def clean_preprocess_reviews(df):
+  '''this function clean and preprocess the reviews dataframe'''
   process_dict= {
     'date':[pd.to_datetime,]
   }

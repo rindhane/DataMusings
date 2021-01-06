@@ -1,21 +1,26 @@
 #! /usr/bin/env ipython
 '''main file to execute the project'''
 
+print('Downloading the data')
 #downloading data into memory
 from datetime import datetime
 from downloader import get_data
 city = "Boston"
+results_path="results/"
 df_dict=get_data(city="Boston", 
                 latest_by=datetime.today().strftime("%d-%B-%Y"))
 listings=df_dict['listings']
 calendar=df_dict['calendar']
 reviews=df_dict['reviews']
 
+print('cleaning and preprocessing the data')
 #cleaning & preprocessing the data
 from clean_data import clean_preprocess_listings
 data=clean_preprocess_listings(listings)
-#plotting the results from the exploratory analysis
 
+#let's plot the results from the exploratory analysis
+
+print('Plotting the results')
 #results1/plot1 : Broad understanding of earning & avg.price
 from plot_functions import plot_graph
 from functions import range_without_outliers
@@ -25,19 +30,23 @@ inputs= {
     'bins' : 600,
     'x_label' : f'Earning by a single listing',
     'y_label': "No. of Listing", 
-    'labelsize': 20,
-    'fontsize' : 30,
+    'labelsize': 10,
+    'fontsize' : 12,
     'xlim':range_without_outliers(data['annual_earnings'][data['annual_earnings']!=0]),
     'legendlabel':'Earning ',
-    'legendsize':20,
-    'file_': 'results/average_earning.jpg',
+    'legendsize':10,
+    'file_': f'{results_path}average_earning.jpg',
 }
-
 plot_graph(data['annual_earnings'][data['annual_earnings']!=0].values, **inputs)
-print(f"The average price/night for a visitor in {city} based on\
-available listings is ",data['price'].mean()," in US-Dollars")
 
-#results 1/ plot2:  various listings
+#print the average earning and offered price/night
+print(f"The average earning among the listings in {city}\
+ is ",int(data['annual_earnings'].mean())," in US-Dollars")
+
+print(f"The average price/night for a visitor in {city} based on\
+ available listings is ",int(data['price'].mean())," in US-Dollars")
+
+#results 1/ plot2: Histogram of price and its occurences
 from plot_functions import plot_graph
 from functions import range_without_outliers
 inputs= {
@@ -46,15 +55,17 @@ inputs= {
     'bins' : 200,
     'x_label' : f"Listings's Price/Night ",
     'y_label': "No. of Listings", 
-    'labelsize': 20,
-    'fontsize' : 30,
+    'labelsize': 10,
+    'fontsize' : 12,
     'xlim':range_without_outliers(data['price']),
     'legendlabel':'price/night',
-    'legendsize':20,
-    'file_': 'results/price_options.jpg'
+    'legendsize':10,
+    'file_': f'{results_path}price_options.jpg'
 }
 plot_graph(data['price'].values, **inputs)
+
 #results 2/ plot1:  Most opted price by visitors to the city.
+import pandas as pd
 def price_demand(df):
   ans=list()
   tmp=data[['price','number_of_reviews_ltm']].apply(
@@ -68,12 +79,12 @@ inputs= {
     'bins' : 50,
     'x_label' : f"Listings's Price/Night ",
     'y_label': "No. of Visits", 
-    'labelsize': 20,
-    'fontsize' : 30,
+    'labelsize': 10,
+    'fontsize' : 12,
     'xlim':[0,range_without_outliers(price_demand(data))[1]],
     'legendlabel':'Visits',
-    'legendsize':20,
-    'file_': 'results/price_demand.jpg'
+    'legendsize':10,
+    'file_': f'{results_path}price_demand.jpg'
 }
 plot_graph(price_demand(data).values, **inputs)
 print('Price with highest demand =','$'+str(int(price_demand(data).mean())))
@@ -90,14 +101,14 @@ inputs={
     'y_label':'Areas in Boston',
     'kind':'barh',
     'x_label2': 'Avg.price/night',
-    'figWidth':20,
-    'figHeight':30,
-    'labelsize':30,
-    'fontsize':30,
-    'legendsize':20,
+#    'figWidth':20,
+#    'figHeight':30,
+    'labelsize':10,
+    'fontsize':12,
+    'legendsize':10,
     'legendlabel':'annual earning',
     'legendlabel2': 'price',
-    'file_': 'results/earning_distribution.jpg'
+    'file_': f'{results_path}earning_distribution.jpg'
     }
 plot_graph_doubleX([tmp1.index.values,tmp1.values.flatten()],
           [tmp2.values.flatten(),tmp2.index.values,], 
@@ -119,15 +130,15 @@ inputs={
     'x_label':'Types of Listings',
     'kind':'bar',
     'y_label2': 'Avg.price per night',
-    'figWidth':20,
-    'figHeight':30,
-    'labelsize':30,
-    'fontsize':30,
-    'legendsize':20,
+#    'figWidth':20,
+#    'figHeight':30,
+    'labelsize':10,
+    'fontsize':12,
+    'legendsize':10,
     'legendlabel':'Visits',
     'legendlabel2': 'price',
     'xlabelrotation':45,
-    'file_': 'results/categorical_demand.jpg'
+    'file_': f'{results_path}categorical_demand.jpg'
     }
 plot_graph_doubleY([tmp1.index.values,tmp1.values.flatten()],
           [tmp2.index.values,tmp2.values.flatten()], 
@@ -155,25 +166,27 @@ props={
 for col in cols:
     p=tmp[[col,'number_of_reviews_ltm']].groupby(col).mean()
     inputs={
-        'title':f'Impact due to prefernce for {props[col][0]}',
+        'title':f'Impact due to preference for {props[col][0]}',
         'y_label':'Avg No.of Vists per year',
         'x_label':'Types of Listings',
         'kind':'bar',
-        'figWidth':20,
-        'figHeight':30,
-        'labelsize':30,
-        'fontsize':30,
-        'legendsize':20,
+#        'figWidth':20,
+#        'figHeight':30,
+        'labelsize':10,
+        'fontsize':12,
+        'legendsize':10,
         'legendlabel':'Visits',
         'xlabelrotation':45,
-        'file_': f'results/{props[col][1]}',
+        'file_': f'{results_path}{props[col][1]}',
     }
     plot_graph(list(map(lambda x : labels[col][x],p.index.values)),
                     p.values.flatten(),**inputs)
 
 #quick peak in correlation among other variables
 inputs={
-    'file_' : 'results/heatmap.jpg'
+    'file_' : f'{results_path}heatmap.jpg',
+    'title': "Correlations among the variables",
+    'titleSize':15,
 }
 from plot_functions import plot_variable_corelation
 plot_variable_corelation(data.corr(),**inputs)
@@ -195,18 +208,17 @@ inputs={
         'y_label':'No.of Vists per month',
         'x_label':'Months',
         'kind':'bar',
-        'figWidth':10,
-        'figHeight':10,
-        'labelsize':5,
-        'fontsize':10,
-        'legendsize':5,
+        'labelsize':10,
+        'fontsize':12,
+        'legendsize':10,
         'legendlabel':'Visits',
         'xlabelrotation':45,
-        'file_': 'results/monthly_visits.jpg',
+        'file_': f'{results_path}monthly_visits.jpg',
     }
 plot_graph(list(tmp.index.values),
                     tmp.values.flatten(),**inputs)
-    
+
+print('Building the model')   
 #results7: Finding top 3 impact creating explanatory variables
 from model_functions import model
 from functions import subtract_elem
@@ -222,6 +234,7 @@ variables=subtract_elem(tmp.columns,outcomes)
 model.set_inputs(data=tmp,
                 outcomes=outcomes,
                 variables=variables)
+print('Training the the model')
 model.train()
 #model trained & plotting results
 ans=model.model.model.named_steps.regressor.coef_
@@ -232,11 +245,16 @@ tmp=pd.concat([pd.Series(tmp.columns[order]),
                 axis=1,).\
                     rename(columns={0:'features',1:'visit_influencer'})
 inputs={
-    'file_':'results/top3.jpg',
+    'file_':f'{results_path}top3.jpg',
     'show': False,
    'x':'visit_influencer',  
    'y':'features',
     'scale' : ['visit_influencer'],
-    'height':5*2.54,
+    'height':7*2.54,
+    'aspect':0.6,
 }
+#plotting the factors rank based on model's weights
+print("plotting the results from the trained model ")
 plot_coeff(tmp,**inputs)
+print('Complete program has been successfull executed')
+print(f"All the plot results have been created in the path {results_path}")

@@ -1,7 +1,29 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+from functions import self_setup_class
 
-plt.style.use('dark_background')
+plt.tight_layout()
+class env(self_setup_class):
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.set_style()
+    def set_style(self, **kwargs):
+        plt=getattr(self,'plt')
+        style=kwargs.get('style',None)
+        if style:
+            plt.style.use(style)
+        else:
+            plt.style.use(getattr(self,'style','seaborn-bright'))
+        return plt
+
+env_inputs={
+    'plt':plt,
+    'style':'seaborn-bright',
+    'figWidth':10,
+    'figHeight':10,
+}
+envConfig=env(**env_inputs)
+
 def set_axes_details(axes,**inputs):
     x_label=inputs.get('x_label',None)
     y_label=inputs.get('y_label',None)
@@ -14,15 +36,18 @@ def set_axes_details(axes,**inputs):
     axes.tick_params(axis="x", labelsize=labelsize ,color = color, rotation=rotation)
     axes.tick_params(axis='y', labelsize=labelsize, color= color)
     axes.legend(prop={'size': inputs.get('legendsize',5)})
-    axes.set_title(inputs.get('title',None),fontsize= fontsize+20)
+    axes.set_title(inputs.get('title',None),fontsize= fontsize+7)
     axes.set_xlim(inputs.get('xlim',None))
     if inputs.get('grid', None):
         axes.grid()
 
-def figure_details(width,height):
+def figure_details(**inputs):
+    width=inputs.get('figWidth', 
+                getattr(inputs.get('env', envConfig),'figWidth'))
+    height=inputs.get('figHeight',
+                getattr(inputs.get('env', envConfig),'figHeight'))
     return {'figsize': (width,height)}
-
-   
+  
 def plot_inputs(inputs):
     plot_inputs={
         'hist': {
@@ -42,8 +67,7 @@ def is_multiple_series(kind):
 def plot_graph(Xseries, Yseries=None,
                         **inputs):
     '''write utililty of graph'''
-    fig, ax = plt.subplots(**figure_details(
-        inputs.get('figWidth',10),inputs.get('figHeight',10)))
+    fig, ax = plt.subplots(**figure_details(**inputs))
     plot=getattr(ax,
                 inputs.get('kind','plot'),)
     if is_multiple_series(inputs.get('kind','plot')):
@@ -62,8 +86,7 @@ def plot_graph(Xseries, Yseries=None,
 def plot_graph_doubleX(series1,series2,
                         **inputs):
     '''Helper functio to plot the dual plot of barh & line'''
-    fig, ax = plt.subplots(**figure_details(
-        inputs.get('figWidth',10),inputs.get('figHeight',10)))
+    fig, ax = plt.subplots(**figure_details(**inputs))
     ax2 = ax.twiny()
     plot=getattr(ax,
                 inputs.get('kind','plot'),)
@@ -86,13 +109,11 @@ def plot_graph_doubleX(series1,series2,
     if inputs.get('show',False):
         plt.show()
     return fig
-
     
 def plot_graph_doubleY(series1,series2,
                         **inputs):
     '''Helper functio to plot the dual plot of barh & line'''
-    fig, ax = plt.subplots(**figure_details(
-        inputs.get('figWidth',10),inputs.get('figHeight',10)))
+    fig, ax = plt.subplots(**figure_details(**inputs))
     ax2 = ax.twinx()
     plot=getattr(ax,
                 inputs.get('kind','plot'),)
@@ -110,7 +131,7 @@ def plot_graph_doubleY(series1,series2,
                     labelcolor=inputs.get('color2',"tab:red"))
     ax2.set_ylabel( inputs.get('y_label2',None), fontsize=inputs.get('fontsize',5))
     ax2.tick_params(axis='x',rotation=90)
-    ax2.legend(loc=0,prop={'size':inputs.get('legendsize',5)})
+    ax2.legend(loc=2,prop={'size':inputs.get('legendsize',5)})
     if inputs.get('file_', None):
         fig.savefig(inputs.get('file_'))
     if inputs.get('show',False):
@@ -124,7 +145,8 @@ def plot_coeff(df,**inputs):
     height=inputs.get('height',2*2.54)
     plot=sns.catplot(x=inputs.get('x'), y=inputs.get('y'), 
                     kind= 'bar', data=df, 
-                    orient='h', height=height)
+                    orient='h', height=height,
+                    aspect=inputs.get('aspect',1))
     if inputs.get('file_', None):
         plot.fig.savefig(inputs.get('file_'))
     if inputs.get('show',False):
@@ -132,8 +154,9 @@ def plot_coeff(df,**inputs):
     return plot
 
 def plot_variable_corelation(df, **inputs):
-    fig, ax = plt.subplots(**figure_details(
-        inputs.get('figWidth',10),inputs.get('figHeight',10)))
+    fig, ax = plt.subplots(constrained_layout=True,**figure_details(**inputs))
+    ax.set_title(inputs.get('title',None),
+            fontsize = inputs.get('titleSize',10))
     plot=sns.heatmap(df.corr(),ax=ax)
     if inputs.get('file_', None):
         plot.get_figure().savefig(inputs.get('file_'))

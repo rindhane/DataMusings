@@ -16614,7 +16614,8 @@ The top 10 recommendations for user 20 are the following article names:
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><strong>Response:</strong></p>
 <ol>
-<li>In lesson, the decomposed matrices values were estimated through gradient descent method but here they have been calculate by closed method i.e by solving the linear equations.</li>
+<li>The data matrix available here doesn't have any missing values in it i.e there are no numpy.nan values in it. Thus, it makes enable to use closed method (i.e by solving the linear equation or linear factorization) to obtain the decomposed matrix.</li>
+<li>In lesson, there were adequate missing values in the provided data, thus it was not possible to obtain the decomposed matrix by closed method. In that case decomposed matrices values were estimated through gradient descent method (FunkSVD). </li>
 </ol>
 
 </div>
@@ -16995,7 +16996,7 @@ number of test articles not in train set is  0
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[53]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">call</span>
@@ -17015,7 +17016,7 @@ number of test articles not in train set is  0
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[53]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
 
 
 

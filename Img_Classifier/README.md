@@ -112,7 +112,7 @@ jupyter notebook dog_app.ipynb
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 
-This project is licensed under the MIT License - see the [LICENSE.txt](https://github.com/rindhane/DataMusings/blob/master/Img_Classifier/LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.txt](https://github.com/rindhane/DataMusings/blob/master/Img_Classifier/LICENSE.txt) file for details
 
 ### Credits :  
 * [**Udacity**](https://Udacity.com) for guiding about Data Science.   
